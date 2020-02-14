@@ -29,6 +29,7 @@ const baseCapability = {
     app: "sauce-storage:location-walmart.apk",
     platformName: "Android",
     appiumVersion: "1.16.0",
+    build: process.env.SAUCE_BUILD_NAME
     // "autoGrantPermissions": "true"
   }
 
@@ -168,7 +169,17 @@ exports.config = {
     // Test reporter for stdout.
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter.html
-    reporters: ['spec'],
+    reporters: [
+        'spec',
+        ['junit', {
+            outputDir: './junit_xml/',
+            outputFileFormat: function(options) {
+                return `wdio-results-${options.cid}.xml`
+            }
+        }]
+
+    ],
+    
     
     //
     // Options to be passed to Mocha.
