@@ -19,7 +19,8 @@ describe("Walmart Location Test", ()=> {
 
         // var myLocation = browser.getGeoLocation();
         // console.log(`location is ${myLocation}`);
-        browser.setGeoLocation({latitude: 45.5209, longitude: -123.0624, altitude: 10});
+        // browser.setGeoLocation({latitude: 45.5209, longitude: -123.0624, altitude: 10});
+        browser.setGeoLocation({latitude: 38.897877, longitude: -77.036058, altitude: 10});
         browser.pause(10000)
         var myLocation = browser.getGeoLocation();
         console.log(`location now is ${myLocation}`);
@@ -45,8 +46,13 @@ describe("Walmart Location Test", ()=> {
         let storeFinderBtn = $(`android=${selector}`)
 
         browser.waitUntil(() => {
-            return storeFinderBtn.isDisplayed() && storeFinderBtn.isEnabled()
-        }, 5000, "expected store finder button to be present")
+            if (storeFinderBtn.isDisplayed() && storeFinderBtn.isEnabled()) {
+                return true
+            } else {
+                browser.touchPerform([{ "action": "press", "options": { "y": 828, "x": 384 } }, { "action": "wait", "options": { "ms": 3000 } }, { "action": "moveTo", "options": { "y": 236, "x": 384 } }, { "action": "release", "options": {} }])
+                return storeFinderBtn.isDisplayed() && storeFinderBtn.isEnabled()
+            }
+        }, 10000, "expected store finder button to be present")
 
         storeFinderBtn.click();
 
@@ -64,9 +70,14 @@ describe("Walmart Location Test", ()=> {
 
         let zipCode = $('android=new UiSelector().resourceId("com.walmart.android:id/store_finder_current_location_title")')
         
+        browser.waitUntil(() => {
+            return zipCode.isDisplayed() && zipCode.isEnabled()
+        }, 10000, "expected zipCode to be present")
+
+
         let zipCodeText = zipCode.getText()
 
-        expect(zipCodeText).to.be.equal('97113')
+        expect(zipCodeText).to.be.equal('20500')
 
     })
 })
