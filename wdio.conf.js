@@ -7,10 +7,30 @@ const baseCapability = {
     "browserName": "",
     "platformVersion": "8.0",
     "platformName": "Android",
-    "app": "sauce-storage:location.apk",
+    "app": "sauce-storage:location-walmart.apk",
     "automationName": "UiAutomator2",
     "autoGrantPermissions": "true",
     build: process.env.SAUCE_BUILD_NAME
+  }
+
+  const walmartBaseCapability = {
+    deviceName: "Android GoogleAPI Emulator",
+    adbExecTimeout: 50000,
+    automationName: "UiAutomator2",
+    disableWindowAnimation: true,
+    noReset: false,
+    appActivity: "com.walmart.android.app.automation.AutomationLauncherActivity",
+    intentFlags: "0",
+    platformVersion: "8.1",
+    deviceOrientation: "portrait",
+    appWaitActivity: "com.walmart.android.app.automation.AutomationLauncherActivity",
+    noSign: true,
+    fullReset: true,
+    app: "sauce-storage:location-walmart.apk",
+    platformName: "Android",
+    appiumVersion: "1.16.0",
+    build: process.env.SAUCE_BUILD_NAME
+    // "autoGrantPermissions": "true"
   }
 
 exports.config = {
@@ -57,7 +77,7 @@ exports.config = {
     //
     specs: [
         './tests/*.js',
-        './tests/*.ts'
+        './tests/location-test-walmart.ts'
     ],
     // Patterns to exclude.
     exclude: [
@@ -79,13 +99,13 @@ exports.config = {
     // and 30 processes will get spawned. The property handles how many capabilities
     // from the same test should run tests.
     //
-    maxInstances: 10,
+    maxInstances: 20,
     //
     // If you have trouble getting all important capabilities together, check out the
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
     // https://docs.saucelabs.com/reference/platforms-configurator
     //
-    capabilities: cloneCapabilities(baseCapability, NUM_OF_INSTANCES),
+    capabilities: cloneCapabilities(walmartBaseCapability, NUM_OF_INSTANCES),
     //
     // ===================
     // Test Configurations
@@ -149,7 +169,17 @@ exports.config = {
     // Test reporter for stdout.
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter.html
-    reporters: ['spec'],
+    reporters: [
+        'spec',
+        ['junit', {
+            outputDir: './junit_xml/',
+            outputFileFormat: function(options) {
+                return `wdio-results-${options.cid}.xml`
+            }
+        }]
+
+    ],
+    
     
     //
     // Options to be passed to Mocha.
